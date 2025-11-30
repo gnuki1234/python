@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Contacts{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-users page-title-icon"></i>
+            Contacts
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <span>/</span>
+            <span>Contacts</span>
+        </div>
+    </div>
+    <div>
+        <a href="{{ url_for('new_contact') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Contact
+        </a>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <form action="{{ url_for('contacts') }}" method="GET" style="display: flex; gap: 15px; width: 100%; align-items: center;">
+        <input type="text" name="search" class="form-control search-input" placeholder="Search contacts..." value="{{ request.args.get('search', '') }}">
+        <button type="submit" class="btn btn-secondary">
+            <i class="fas fa-search"></i> Search
+        </button>
+        <a href="{{ url_for('contacts') }}" class="btn btn-outline">Clear</a>
+    </form>
+</div>
+
+<!-- Contacts Table -->
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Job Title</th>
+                    <th>Account</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in contacts %}
+                <tr>
+                    <td><a href="{{ url_for('view_contact', id=contact.id) }}">{{ contact.first_name }} {{ contact.last_name }}</a></td>
+                    <td>{{ contact.email or '-' }}</td>
+                    <td>{{ contact.phone or '-' }}</td>
+                    <td>{{ contact.job_title or '-' }}</td>
+                    <td>
+                        {% if contact.account %}
+                        <a href="{{ url_for('view_account', id=contact.account.id) }}">{{ contact.account.name }}</a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>{{ contact.created_at.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state">
+                            <i class="fas fa-users icon"></i>
+                            <h3>No contacts found</h3>
+                            <p>Create your first contact to get started</p>
+                            <a href="{{ url_for('new_contact') }}" class="btn btn-primary" style="margin-top: 15px;">
+                                <i class="fas fa-plus"></i> Create Contact
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-ticket-alt page-title-icon"></i>
+            Tickets
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <span>/</span>
+            <span>Tickets</span>
+        </div>
+    </div>
+    <div>
+        <a href="{{ url_for('new_ticket') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Ticket
+        </a>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <form action="{{ url_for('tickets') }}" method="GET" style="display: flex; gap: 15px; width: 100%; align-items: center;">
+        <input type="text" name="search" class="form-control search-input" placeholder="Search tickets..." value="{{ request.args.get('search', '') }}">
+
+        <select name="state" class="form-control" style="width: 150px;">
+            <option value="">All States</option>
+            <option value="New" {% if request.args.get('state') == 'New' %}selected{% endif %}>New</option>
+            <option value="In Progress" {% if request.args.get('state') == 'In Progress' %}selected{% endif %}>In Progress</option>
+            <option value="On Hold" {% if request.args.get('state') == 'On Hold' %}selected{% endif %}>On Hold</option>
+            <option value="Resolved" {% if request.args.get('state') == 'Resolved' %}selected{% endif %}>Resolved</option>
+            <option value="Closed" {% if request.args.get('state') == 'Closed' %}selected{% endif %}>Closed</option>
+        </select>
+
+        <select name="priority" class="form-control" style="width: 150px;">
+            <option value="">All Priorities</option>
+            <option value="Critical" {% if request.args.get('priority') == 'Critical' %}selected{% endif %}>Critical</option>
+            <option value="High" {% if request.args.get('priority') == 'High' %}selected{% endif %}>High</option>
+            <option value="Medium" {% if request.args.get('priority') == 'Medium' %}selected{% endif %}>Medium</option>
+            <option value="Low" {% if request.args.get('priority') == 'Low' %}selected{% endif %}>Low</option>
+        </select>
+
+        <button type="submit" class="btn btn-secondary">
+            <i class="fas fa-search"></i> Search
+        </button>
+        <a href="{{ url_for('tickets') }}" class="btn btn-outline">Clear</a>
+    </form>
+</div>
+
+<!-- Tickets Table -->
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Short Description</th>
+                    <th>Account</th>
+                    <th>State</th>
+                    <th>Priority</th>
+                    <th>Assigned To</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                    <td><a href="{{ url_for('view_ticket', id=ticket.id) }}">{{ ticket.number }}</a></td>
+                    <td>{{ ticket.short_description[:60] }}{% if ticket.short_description|length > 60 %}...{% endif %}</td>
+                    <td>
+                        {% if ticket.account %}
+                        <a href="{{ url_for('view_account', id=ticket.account.id) }}">{{ ticket.account.name }}</a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ ticket.state|lower|replace(' ', '-') }}">
+                            {{ ticket.state }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ ticket.priority|lower }}">
+                            {{ ticket.priority }}
+                        </span>
+                    </td>
+                    <td>{{ ticket.assigned_to or '-' }}</td>
+                    <td>{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ ticket.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox icon"></i>
+                            <h3>No tickets found</h3>
+                            <p>Try adjusting your search or filter criteria</p>
+                            <a href="{{ url_for('new_ticket') }}" class="btn btn-primary" style="margin-top: 15px;">
+                                <i class="fas fa-plus"></i> Create First Ticket
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

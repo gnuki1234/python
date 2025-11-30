@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}{% if ticket %}Edit Ticket{% else %}New Ticket{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-ticket-alt page-title-icon"></i>
+            {% if ticket %}Edit Ticket: {{ ticket.number }}{% else %}New Ticket{% endif %}
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <span>/</span>
+            <a href="{{ url_for('tickets') }}">Tickets</a>
+            <span>/</span>
+            <span>{% if ticket %}Edit{% else %}New{% endif %}</span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-edit icon"></i>
+            Ticket Details
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label required">Short Description</label>
+                    <input type="text" name="short_description" class="form-control" required
+                           value="{{ ticket.short_description if ticket else '' }}"
+                           placeholder="Brief summary of the issue">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-control">
+                        <option value="">-- Select --</option>
+                        <option value="Hardware" {% if ticket and ticket.category == 'Hardware' %}selected{% endif %}>Hardware</option>
+                        <option value="Software" {% if ticket and ticket.category == 'Software' %}selected{% endif %}>Software</option>
+                        <option value="Network" {% if ticket and ticket.category == 'Network' %}selected{% endif %}>Network</option>
+                        <option value="Account" {% if ticket and ticket.category == 'Account' %}selected{% endif %}>Account</option>
+                        <option value="Other" {% if ticket and ticket.category == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="5"
+                          placeholder="Detailed description of the issue">{{ ticket.description if ticket else '' }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <select name="state" class="form-control">
+                        <option value="New" {% if ticket and ticket.state == 'New' %}selected{% endif %}>New</option>
+                        <option value="In Progress" {% if ticket and ticket.state == 'In Progress' %}selected{% endif %}>In Progress</option>
+                        <option value="On Hold" {% if ticket and ticket.state == 'On Hold' %}selected{% endif %}>On Hold</option>
+                        <option value="Resolved" {% if ticket and ticket.state == 'Resolved' %}selected{% endif %}>Resolved</option>
+                        <option value="Closed" {% if ticket and ticket.state == 'Closed' %}selected{% endif %}>Closed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <select name="priority" class="form-control">
+                        <option value="Low" {% if ticket and ticket.priority == 'Low' %}selected{% endif %}>Low</option>
+                        <option value="Medium" {% if (not ticket) or (ticket and ticket.priority == 'Medium') %}selected{% endif %}>Medium</option>
+                        <option value="High" {% if ticket and ticket.priority == 'High' %}selected{% endif %}>High</option>
+                        <option value="Critical" {% if ticket and ticket.priority == 'Critical' %}selected{% endif %}>Critical</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Account</label>
+                    <select name="account_id" class="form-control" id="accountSelect">
+                        <option value="">-- Select Account --</option>
+                        {% for account in accounts %}
+                        <option value="{{ account.id }}" {% if ticket and ticket.account_id == account.id %}selected{% endif %}>
+                            {{ account.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contact</label>
+                    <select name="contact_id" class="form-control" id="contactSelect">
+                        <option value="">-- Select Contact --</option>
+                        {% for contact in contacts %}
+                        <option value="{{ contact.id }}" {% if ticket and ticket.contact_id == contact.id %}selected{% endif %}>
+                            {{ contact.first_name }} {{ contact.last_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Assigned To</label>
+                <select name="assigned_to" class="form-control">
+                    <option value="">-- Unassigned --</option>
+                    <option value="Admin" {% if ticket and ticket.assigned_to == 'Admin' %}selected{% endif %}>Admin</option>
+                    <option value="Support Team" {% if ticket and ticket.assigned_to == 'Support Team' %}selected{% endif %}>Support Team</option>
+                    <option value="IT Dept" {% if ticket and ticket.assigned_to == 'IT Dept' %}selected{% endif %}>IT Dept</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {% if ticket %}Update{% else %}Create{% endif %} Ticket
+                </button>
+                <a href="{{ url_for('tickets') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

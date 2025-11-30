@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{% if task %}Edit Task{% else %}New Task{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-tasks page-title-icon"></i>
+            {% if task %}Edit Task{% else %}New Task{% endif %}
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <span>/</span>
+            <a href="{{ url_for('tasks') }}">Tasks</a>
+            <span>/</span>
+            <span>{% if task %}Edit{% else %}New{% endif %}</span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-edit icon"></i>
+            Task Details
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label required">Title</label>
+                <input type="text" name="title" class="form-control" required
+                       value="{{ task.title if task else '' }}"
+                       placeholder="Task title">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="4"
+                          placeholder="Task description">{{ task.description if task else '' }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <select name="state" class="form-control">
+                        <option value="Open" {% if task and task.state == 'Open' %}selected{% endif %}>Open</option>
+                        <option value="In Progress" {% if task and task.state == 'In Progress' %}selected{% endif %}>In Progress</option>
+                        <option value="Completed" {% if task and task.state == 'Completed' %}selected{% endif %}>Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <select name="priority" class="form-control">
+                        <option value="Low" {% if task and task.priority == 'Low' %}selected{% endif %}>Low</option>
+                        <option value="Medium" {% if (not task) or (task and task.priority == 'Medium') %}selected{% endif %}>Medium</option>
+                        <option value="High" {% if task and task.priority == 'High' %}selected{% endif %}>High</option>
+                        <option value="Critical" {% if task and task.priority == 'Critical' %}selected{% endif %}>Critical</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Due Date</label>
+                    <input type="date" name="due_date" class="form-control"
+                           value="{{ task.due_date.strftime('%Y-%m-%d') if task and task.due_date else '' }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assigned To</label>
+                    <select name="assigned_to" class="form-control">
+                        <option value="">-- Unassigned --</option>
+                        <option value="Admin" {% if task and task.assigned_to == 'Admin' %}selected{% endif %}>Admin</option>
+                        <option value="Support Team" {% if task and task.assigned_to == 'Support Team' %}selected{% endif %}>Support Team</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {% if task %}Update{% else %}Create{% endif %} Task
+                </button>
+                <a href="{{ url_for('tasks') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

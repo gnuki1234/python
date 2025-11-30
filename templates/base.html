@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CRM{% endblock %} - Construction CRM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">C</div>
+                <span>ConstructCRM</span>
+            </div>
+            <div class="global-search">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search everything..." id="globalSearch">
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="header-icon" title="Notifications">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="header-icon" title="Help">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <div class="header-icon" title="Settings">
+                <i class="fas fa-cog"></i>
+            </div>
+            <div class="user-avatar" title="User Profile">
+                AD
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">Favorites</div>
+            <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <span class="icon"><i class="fas fa-home"></i></span>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('tickets') }}" class="nav-item {% if 'ticket' in request.endpoint %}active{% endif %}">
+                <span class="icon"><i class="fas fa-ticket-alt"></i></span>
+                <span>Tickets</span>
+                <span class="nav-badge">{{ ticket_count if ticket_count else '' }}</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Service Desk</div>
+            <a href="{{ url_for('tickets') }}" class="nav-item">
+                <span class="icon"><i class="fas fa-headset"></i></span>
+                <span>All Tickets</span>
+            </a>
+            <a href="{{ url_for('tickets') }}?state=New" class="nav-item">
+                <span class="icon"><i class="fas fa-plus-circle"></i></span>
+                <span>New Tickets</span>
+            </a>
+            <a href="{{ url_for('tickets') }}?state=In Progress" class="nav-item">
+                <span class="icon"><i class="fas fa-spinner"></i></span>
+                <span>In Progress</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Customer Management</div>
+            <a href="{{ url_for('accounts') }}" class="nav-item {% if 'account' in request.endpoint %}active{% endif %}">
+                <span class="icon"><i class="fas fa-building"></i></span>
+                <span>Accounts</span>
+            </a>
+            <a href="{{ url_for('contacts') }}" class="nav-item {% if 'contact' in request.endpoint %}active{% endif %}">
+                <span class="icon"><i class="fas fa-users"></i></span>
+                <span>Contacts</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">My Work</div>
+            <a href="{{ url_for('tasks') }}" class="nav-item {% if 'task' in request.endpoint %}active{% endif %}">
+                <span class="icon"><i class="fas fa-tasks"></i></span>
+                <span>My Tasks</span>
+            </a>
+            <a href="{{ url_for('tickets') }}?assigned_to=Admin" class="nav-item">
+                <span class="icon"><i class="fas fa-clipboard-list"></i></span>
+                <span>My Tickets</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-title">Reports</div>
+            <a href="#" class="nav-item">
+                <span class="icon"><i class="fas fa-chart-bar"></i></span>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="icon"><i class="fas fa-file-alt"></i></span>
+                <span>Reports</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

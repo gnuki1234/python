@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}{{ contact.first_name }} {{ contact.last_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-user page-title-icon"></i>
+            {{ contact.first_name }} {{ contact.last_name }}
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <span>/</span>
+            <a href="{{ url_for('contacts') }}">Contacts</a>
+            <span>/</span>
+            <span>{{ contact.first_name }} {{ contact.last_name }}</span>
+        </div>
+    </div>
+    <div>
+        <a href="{{ url_for('edit_contact', id=contact.id) }}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        <a href="{{ url_for('contacts') }}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+<div class="content-grid">
+    <div>
+        <!-- Contact Details -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-info-circle icon"></i>
+                    Contact Details
+                </h3>
+            </div>
+            <div class="card-body" style="padding: 0 20px;">
+                <div class="field-group">
+                    <div class="field-label">Full Name</div>
+                    <div class="field-value">{{ contact.first_name }} {{ contact.last_name }}</div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">Email</div>
+                    <div class="field-value">{{ contact.email or '-' }}</div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">Phone</div>
+                    <div class="field-value">{{ contact.phone or '-' }}</div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">Job Title</div>
+                    <div class="field-value">{{ contact.job_title or '-' }}</div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">Account</div>
+                    <div class="field-value">
+                        {% if contact.account %}
+                        <a href="{{ url_for('view_account', id=contact.account.id) }}">{{ contact.account.name }}</a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="field-group">
+                    <div class="field-label">Created</div>
+                    <div class="field-value">{{ contact.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Tickets -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-ticket-alt icon"></i>
+                    Related Tickets ({{ contact.tickets|length }})
+                </h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Description</th>
+                            <th>State</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in contact.tickets[:10] %}
+                        <tr>
+                            <td><a href="{{ url_for('view_ticket', id=ticket.id) }}">{{ ticket.number }}</a></td>
+                            <td>{{ ticket.short_description[:40] }}...</td>
+                            <td><span class="badge badge-{{ ticket.state|lower|replace(' ', '-') }}">{{ ticket.state }}</span></td>
+                            <td><span class="badge badge-{{ ticket.priority|lower }}">{{ ticket.priority }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--text-muted);">
+                                No tickets for this contact
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-bolt icon"></i>
+                    Quick Actions
+                </h3>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('new_ticket') }}" class="quick-action-btn" style="margin-bottom: 10px;">
+                    <div class="icon"><i class="fas fa-ticket-alt"></i></div>
+                    <span>Create Ticket for Contact</span>
+                </a>
+                {% if contact.email %}
+                <a href="mailto:{{ contact.email }}" class="quick-action-btn">
+                    <div class="icon"><i class="fas fa-envelope"></i></div>
+                    <span>Send Email</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

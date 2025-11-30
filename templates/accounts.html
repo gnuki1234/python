@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Accounts{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-building page-title-icon"></i>
+            Accounts
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <span>/</span>
+            <span>Accounts</span>
+        </div>
+    </div>
+    <div>
+        <a href="{{ url_for('new_account') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Account
+        </a>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <form action="{{ url_for('accounts') }}" method="GET" style="display: flex; gap: 15px; width: 100%; align-items: center;">
+        <input type="text" name="search" class="form-control search-input" placeholder="Search accounts..." value="{{ request.args.get('search', '') }}">
+        <button type="submit" class="btn btn-secondary">
+            <i class="fas fa-search"></i> Search
+        </button>
+        <a href="{{ url_for('accounts') }}" class="btn btn-outline">Clear</a>
+    </form>
+</div>
+
+<!-- Accounts Table -->
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Industry</th>
+                    <th>Phone</th>
+                    <th>Website</th>
+                    <th>Contacts</th>
+                    <th>Tickets</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td><a href="{{ url_for('view_account', id=account.id) }}">{{ account.name }}</a></td>
+                    <td>{{ account.industry or '-' }}</td>
+                    <td>{{ account.phone or '-' }}</td>
+                    <td>{{ account.website or '-' }}</td>
+                    <td>{{ account.contacts|length }}</td>
+                    <td>{{ account.tickets|length }}</td>
+                    <td>{{ account.created_at.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <i class="fas fa-building icon"></i>
+                            <h3>No accounts found</h3>
+                            <p>Create your first account to get started</p>
+                            <a href="{{ url_for('new_account') }}" class="btn btn-primary" style="margin-top: 15px;">
+                                <i class="fas fa-plus"></i> Create Account
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

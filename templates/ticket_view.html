@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ticket.number }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-ticket-alt page-title-icon"></i>
+            {{ ticket.number }}
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <span>/</span>
+            <a href="{{ url_for('tickets') }}">Tickets</a>
+            <span>/</span>
+            <span>{{ ticket.number }}</span>
+        </div>
+    </div>
+    <div>
+        <a href="{{ url_for('edit_ticket', id=ticket.id) }}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        <a href="{{ url_for('tickets') }}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <div class="record-header">
+            <div class="record-number">{{ ticket.number }}</div>
+            <div class="record-title">{{ ticket.short_description }}</div>
+            <div class="record-meta">
+                <div class="record-meta-item">
+                    <span class="record-meta-label">State</span>
+                    <span class="record-meta-value">
+                        <span class="badge badge-{{ ticket.state|lower|replace(' ', '-') }}">{{ ticket.state }}</span>
+                    </span>
+                </div>
+                <div class="record-meta-item">
+                    <span class="record-meta-label">Priority</span>
+                    <span class="record-meta-value">
+                        <span class="badge badge-{{ ticket.priority|lower }}">{{ ticket.priority }}</span>
+                    </span>
+                </div>
+                <div class="record-meta-item">
+                    <span class="record-meta-label">Created</span>
+                    <span class="record-meta-value">{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="record-meta-item">
+                    <span class="record-meta-label">Updated</span>
+                    <span class="record-meta-value">{{ ticket.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 20px;">
+            <div class="field-group">
+                <div class="field-label">Short Description</div>
+                <div class="field-value">{{ ticket.short_description }}</div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-label">Description</div>
+                <div class="field-value">{{ ticket.description or '-' }}</div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-label">Category</div>
+                <div class="field-value">{{ ticket.category or '-' }}</div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-label">Assigned To</div>
+                <div class="field-value">{{ ticket.assigned_to or 'Unassigned' }}</div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-label">Account</div>
+                <div class="field-value">
+                    {% if ticket.account %}
+                    <a href="{{ url_for('view_account', id=ticket.account.id) }}">{{ ticket.account.name }}</a>
+                    {% else %}
+                    -
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="field-group">
+                <div class="field-label">Contact</div>
+                <div class="field-value">
+                    {% if ticket.contact %}
+                    <a href="{{ url_for('view_contact', id=ticket.contact.id) }}">
+                        {{ ticket.contact.first_name }} {{ ticket.contact.last_name }}
+                    </a>
+                    {% else %}
+                    -
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

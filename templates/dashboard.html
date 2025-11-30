@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-tachometer-alt page-title-icon"></i>
+            Dashboard
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <span>/</span>
+            <span>Dashboard</span>
+        </div>
+    </div>
+    <div>
+        <a href="{{ url_for('new_ticket') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Ticket
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="dashboard-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-ticket-alt"></i>
+        </div>
+        <div class="stat-number">{{ total_tickets }}</div>
+        <div class="stat-label">Total Tickets</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-number">{{ open_tickets }}</div>
+        <div class="stat-label">Open Tickets</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-building"></i>
+        </div>
+        <div class="stat-number">{{ total_accounts }}</div>
+        <div class="stat-label">Total Accounts</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-number">{{ total_contacts }}</div>
+        <div class="stat-label">Total Contacts</div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <div>
+        <!-- Recent Tickets -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-ticket-alt icon"></i>
+                    Recent Tickets
+                </h3>
+                <a href="{{ url_for('tickets') }}" class="btn btn-sm btn-outline">View All</a>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Short Description</th>
+                            <th>State</th>
+                            <th>Priority</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in recent_tickets %}
+                        <tr>
+                            <td><a href="{{ url_for('view_ticket', id=ticket.id) }}">{{ ticket.number }}</a></td>
+                            <td>{{ ticket.short_description[:50] }}{% if ticket.short_description|length > 50 %}...{% endif %}</td>
+                            <td>
+                                <span class="badge badge-{{ ticket.state|lower|replace(' ', '-') }}">
+                                    {{ ticket.state }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ ticket.priority|lower }}">
+                                    {{ ticket.priority }}
+                                </span>
+                            </td>
+                            <td>{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-inbox icon"></i>
+                                <h3>No tickets yet</h3>
+                                <p>Create your first ticket to get started</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Ticket by State Chart -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-pie icon"></i>
+                    Tickets by State
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" id="stateChart">
+                    <div style="text-align: center;">
+                        {% for state, count in ticket_by_state.items() %}
+                        <div style="display: inline-block; margin: 10px 20px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--primary-color);">{{ count }}</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">{{ state }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-bolt icon"></i>
+                    Quick Actions
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="quick-actions">
+                    <a href="{{ url_for('new_ticket') }}" class="quick-action-btn">
+                        <div class="icon"><i class="fas fa-plus"></i></div>
+                        <span>New Ticket</span>
+                    </a>
+                    <a href="{{ url_for('new_account') }}" class="quick-action-btn">
+                        <div class="icon"><i class="fas fa-building"></i></div>
+                        <span>New Account</span>
+                    </a>
+                    <a href="{{ url_for('new_contact') }}" class="quick-action-btn">
+                        <div class="icon"><i class="fas fa-user-plus"></i></div>
+                        <span>New Contact</span>
+                    </a>
+                    <a href="{{ url_for('new_task') }}" class="quick-action-btn">
+                        <div class="icon"><i class="fas fa-tasks"></i></div>
+                        <span>New Task</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Accounts -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-building icon"></i>
+                    Recent Accounts
+                </h3>
+                <a href="{{ url_for('accounts') }}" class="btn btn-sm btn-outline">View All</a>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Industry</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for account in recent_accounts %}
+                        <tr>
+                            <td><a href="{{ url_for('view_account', id=account.id) }}">{{ account.name }}</a></td>
+                            <td>{{ account.industry or '-' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2" style="text-align: center; padding: 20px; color: var(--text-muted);">
+                                No accounts yet
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tickets by Priority -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-exclamation-triangle icon"></i>
+                    Tickets by Priority
+                </h3>
+            </div>
+            <div class="card-body">
+                {% for priority, count in ticket_by_priority.items() %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                    <span class="badge badge-{{ priority|lower }}">{{ priority }}</span>
+                    <span style="font-weight: 600;">{{ count }}</span>
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 20px; color: var(--text-muted);">
+                    No tickets yet
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

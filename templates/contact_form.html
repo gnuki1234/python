@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{% if contact %}Edit Contact{% else %}New Contact{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-user page-title-icon"></i>
+            {% if contact %}Edit Contact: {{ contact.first_name }} {{ contact.last_name }}{% else %}New Contact{% endif %}
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Home</a>
+            <span>/</span>
+            <a href="{{ url_for('contacts') }}">Contacts</a>
+            <span>/</span>
+            <span>{% if contact %}Edit{% else %}New{% endif %}</span>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-edit icon"></i>
+            Contact Details
+        </h3>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label required">First Name</label>
+                    <input type="text" name="first_name" class="form-control" required
+                           value="{{ contact.first_name if contact else '' }}"
+                           placeholder="First name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">Last Name</label>
+                    <input type="text" name="last_name" class="form-control" required
+                           value="{{ contact.last_name if contact else '' }}"
+                           placeholder="Last name">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control"
+                           value="{{ contact.email if contact else '' }}"
+                           placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="text" name="phone" class="form-control"
+                           value="{{ contact.phone if contact else '' }}"
+                           placeholder="Phone number">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Job Title</label>
+                    <input type="text" name="job_title" class="form-control"
+                           value="{{ contact.job_title if contact else '' }}"
+                           placeholder="Job title">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Account</label>
+                    <select name="account_id" class="form-control">
+                        <option value="">-- Select Account --</option>
+                        {% for account in accounts %}
+                        <option value="{{ account.id }}" {% if contact and contact.account_id == account.id %}selected{% endif %}>
+                            {{ account.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {% if contact %}Update{% else %}Create{% endif %} Contact
+                </button>
+                <a href="{{ url_for('contacts') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
